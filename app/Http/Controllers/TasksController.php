@@ -132,6 +132,7 @@ class TasksController extends Controller
 
     public function index($links, $bloqueTitulo, $cursoTitulo)
     {
+        ini_set('memory_limit','16000000000000000000000000000000000000M');
         $i=1;
         foreach ($links as $linkito) {
 
@@ -190,7 +191,7 @@ class TasksController extends Controller
         
         // header("Content-Type: text/plain");
 
-        $qualities=["1080p", "720p", "320p"];
+        $qualities=["720p", "320p"];
 
         foreach ($qualities as $key => $value) {
             foreach ($res["request"]["files"]["progressive"] as $value2) {
