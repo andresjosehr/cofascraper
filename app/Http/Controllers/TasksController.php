@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Storage;
 class TasksController extends Controller
 {
 
-    public function getLinks()
+    public function getLinks(Request $request)
     {
         $info = [];
         $client = new \GuzzleHttp\Client();
@@ -30,11 +30,7 @@ class TasksController extends Controller
             ".codigofacilito.com"
         );
 
-
-        $variable="https://codigofacilito.com/cursos/php-profesional";
-
-
-        $cofaPage = $client->request('GET', $variable, [
+        $cofaPage = $client->request('GET', $request->input("curso"), [
             'cookies'        => $jar
         ]);
         
@@ -194,7 +190,7 @@ class TasksController extends Controller
         
         // header("Content-Type: text/plain");
 
-        $qualities=["360p"];
+        $qualities=["1080p", "720p", "320p"];
 
         foreach ($qualities as $key => $value) {
             foreach ($res["request"]["files"]["progressive"] as $value2) {
