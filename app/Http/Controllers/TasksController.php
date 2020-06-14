@@ -129,15 +129,14 @@ class TasksController extends Controller
         foreach ($info["lecciones"] as $value) {
 
             self::index($value["videos"], $value["titulo"], $info["curso"]);
-
-            return "SIIIII";
         }
 
-        return $info;
+        return "Curso descargado exitosamente";
     }
 
     public function index($links, $bloqueTitulo, $cursoTitulo)
     {
+        $i=1;
         foreach ($links as $linkito) {
 
         $client = new \GuzzleHttp\Client();
@@ -208,11 +207,11 @@ class TasksController extends Controller
         }   
 
         $contents = file_get_contents($videoInfo["url"]);
-        Storage::put($cursoTitulo."/".$bloqueTitulo, $contents);
+        Storage::put($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4", $contents);
+
+        $i++;
 
     }
-
-        return "Exito!!";
         
     }
 
