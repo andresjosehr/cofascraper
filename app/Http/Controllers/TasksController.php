@@ -148,7 +148,7 @@ class TasksController extends Controller
     {
         ini_set('memory_limit','16000000000000000000000000000000000000M');
         $i=1; $j=0;
-        foreach ($links as $linkito) {
+
         if(!Storage::exists($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4")){
         $client = new \GuzzleHttp\Client();
 
@@ -223,7 +223,7 @@ class TasksController extends Controller
             if($videoInfo) break;
         }   
         
-        
+        foreach ($links as $linkito) {
         
             $contents = file_get_contents($videoInfo["url"]);
             Storage::put($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4", $contents);
