@@ -61,67 +61,71 @@ class TasksController extends Controller
 
         });
 
-        array_pop($blockLinks);
+        
 
-        $info["lecciones"] =  $crawler->filter('.collapsible.no-border.no-box-shadow li')->each(function (Crawler $node, $i) {
+        $info["lecciones"] =  $crawler->filter('.collapsible.no-border.no-box-shadow li header')->each(function (Crawler $node, $i) {
                 if(explode(".-", $node->text())){
                     return ["titulo" => explode(" arrow_drop_down", $node->text())[0]];
                 }            
 
         });
+        
+        
 
-        array_pop($info["lecciones"]);
-        array_pop($info["lecciones"]);
-
-        $i=0;
-        foreach($blockLinks as $value){
-
-            $cofaPage = $client->request('GET', "https://codigofacilito.com/blocks/".$value, [
-                'headers' => [
-
-                    ":authority"            => "codigofacilito.com",
-                    ":method"               => "GET",
-                    ":path"                 => "/blocks/546",
-                    ":scheme"               => "https",
-                    "accept"                => "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
-                    "accept-language"       => "en-US,en;q=0.9",
-                    "cache-control"         => "no-cache",
-                    "cookie"                => "__cfduid=d1834a196e70166f886c361cbc85b77c11592064948; __stripe_mid=4a4ac703-d74b-483d-a16e-1338b00000a1; __stripe_sid=b6154848-2a84-4bd1-aca2-cc9e8a85f82e; remember_user_token=W1s0NDQ4NzZdLCIkMmEkMTAkcTBCVlpTR2sxUENBeFZENkxnS3BiZSIsIjE1OTIwNjYwNzMuMDQzMjYiXQ%3D%3D--04dd766124806dbc3b34f5fca93923eeffcecefb; _pf_session=TXczUnNXZldWbVk3L1V1bjFnZmlrYzErYTJhL2xhSW5zRFRTOFJ1Qzk0Mlc5b0VuVFkvTDNnc1FVOUZ4QUFRYzRlVnJzbkhiV05lTUFndTNQdFhJaWZGSSt1L2F6bTY3T2FiQ2kyOUpWQXFSM3J4UndKTWFndlV3TEVTeGRPNHk4SFZ2QWY3eXZSQlhjTDhVOWYzVlhhNWFPYnBDVVpDdHQ4aXNET0lRNHVVSGVNckdRV3J6SnpndnlmekpOS1pmQlJhUzB1YUpQSjcyWXltdHlkdHpINGlOL1U1bnRQckpmdkNmUXZXS2d3cWFla1dTVis5RUM1NFZ0bTk0aFZMbi0tVGVOTXVNYUM4YkhERHIwTllIK1V0UT09--9b364f5300f629f5f013d5f6b26644c5061b0f31",
-                    "pragma"                => "no-cache",
-                    "referer"               => "https://codigofacilito.com/cursos/php-profesional",
-                    "sec-fetch-dest"        => "empty",
-                    "sec-fetch-mode"        => "cors",
-                    "sec-fetch-site"        => "same-origin",
-                    "user-agent"            => "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36",
-                    "x-csrf-token"          => "KzXyW0tN4x3EtVpBj6VFFu8UECDNfwZF/IBgcWF5JnDPTpYu3jLdXFJHK68P2/9gBcXef7uK2Fd7IY41W68YWA==",
-                    "x-requested-with"      => "XMLHttpRequest"
-                ]
-
-            ]);
-
-
-                header("Content-Type: text/plain");
-            
-            $blogContent = explode('.html("', $cofaPage->getBody()->getContents())[1];
-            $blogContent = explode('");', $blogContent)[0];
-
-            $blogContent= preg_replace('/\\\\/', '', $blogContent);
-
-            $crawler = new Crawler($blogContent);
-
-            $info["lecciones"][$i]["videos"] = [];
-            $info["lecciones"][$i]["videos"] =  $crawler->filter('a')->each(function (Crawler $node, $i) {
-
-                return [
-                        "link"   => "https://codigofacilito.com".$node->extract(['href'])[0],
-                        "nombre" => mb_substr($node->filter(".box")->text(), 0, -1)
-                       ];
-
-            });
-
-            $i++;
+            $i=0;
+            foreach($blockLinks as $value){
+                if($value){
+                $cofaPage = $client->request('GET', "https://codigofacilito.com/blocks/".$value, [
+                    'headers' => [
+    
+                        ":authority"            => "codigofacilito.com",
+                        ":method"               => "GET",
+                        ":path"                 => "/blocks/546",
+                        ":scheme"               => "https",
+                        "accept"                => "text/javascript, application/javascript, application/ecmascript, application/x-ecmascript, */*; q=0.01",
+                        "accept-language"       => "en-US,en;q=0.9",
+                        "cache-control"         => "no-cache",
+                        "cookie"                => "__cfduid=d1834a196e70166f886c361cbc85b77c11592064948; __stripe_mid=4a4ac703-d74b-483d-a16e-1338b00000a1; __stripe_sid=b6154848-2a84-4bd1-aca2-cc9e8a85f82e; remember_user_token=W1s0NDQ4NzZdLCIkMmEkMTAkcTBCVlpTR2sxUENBeFZENkxnS3BiZSIsIjE1OTIwNjYwNzMuMDQzMjYiXQ%3D%3D--04dd766124806dbc3b34f5fca93923eeffcecefb; _pf_session=TXczUnNXZldWbVk3L1V1bjFnZmlrYzErYTJhL2xhSW5zRFRTOFJ1Qzk0Mlc5b0VuVFkvTDNnc1FVOUZ4QUFRYzRlVnJzbkhiV05lTUFndTNQdFhJaWZGSSt1L2F6bTY3T2FiQ2kyOUpWQXFSM3J4UndKTWFndlV3TEVTeGRPNHk4SFZ2QWY3eXZSQlhjTDhVOWYzVlhhNWFPYnBDVVpDdHQ4aXNET0lRNHVVSGVNckdRV3J6SnpndnlmekpOS1pmQlJhUzB1YUpQSjcyWXltdHlkdHpINGlOL1U1bnRQckpmdkNmUXZXS2d3cWFla1dTVis5RUM1NFZ0bTk0aFZMbi0tVGVOTXVNYUM4YkhERHIwTllIK1V0UT09--9b364f5300f629f5f013d5f6b26644c5061b0f31",
+                        "pragma"                => "no-cache",
+                        "referer"               => "https://codigofacilito.com/cursos/php-profesional",
+                        "sec-fetch-dest"        => "empty",
+                        "sec-fetch-mode"        => "cors",
+                        "sec-fetch-site"        => "same-origin",
+                        "user-agent"            => "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36",
+                        "x-csrf-token"          => "KzXyW0tN4x3EtVpBj6VFFu8UECDNfwZF/IBgcWF5JnDPTpYu3jLdXFJHK68P2/9gBcXef7uK2Fd7IY41W68YWA==",
+                        "x-requested-with"      => "XMLHttpRequest"
+                    ]
+    
+                ]);
+    
+    
+                    header("Content-Type: text/plain");
+                
+                $blogContent = explode('.html("', $cofaPage->getBody()->getContents())[1];
+                $blogContent = explode('");', $blogContent)[0];
+    
+                $blogContent= preg_replace('/\\\\/', '', $blogContent);
+               
+                $crawler = new Crawler($blogContent);
+    
+                $info["lecciones"][$i]["videos"] = [];
+                $info["lecciones"][$i]["videos"] =  $crawler->filter('a')->each(function (Crawler $node, $i) {
+    
+                    return [
+                            "link"   => "https://codigofacilito.com".$node->extract(['href'])[0],
+                            "nombre" => mb_substr($node->filter(".box")->text(), 0, -1)
+                           ];
+    
+                });
+    
+                $i++;
+            }
         }
-
+        
+        if(count($info["lecciones"])!=1){
+            array_pop($info["lecciones"]);
+        }
+        
         foreach ($info["lecciones"] as $value) {
 
             self::index($value["videos"], $value["titulo"], $info["curso"]);
@@ -135,7 +139,7 @@ class TasksController extends Controller
         ini_set('memory_limit','16000000000000000000000000000000000000M');
         $i=1;
         foreach ($links as $linkito) {
-
+        if(!Storage::exists($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4")){
         $client = new \GuzzleHttp\Client();
 
 
@@ -164,6 +168,9 @@ class TasksController extends Controller
             return $node->extract(['src'])[0];
 
         });
+        
+        if(isset($viemoURL[0])){
+        
 
         $cofaPage = $client->request('GET', $viemoURL[0],[
             "headers" => [
@@ -191,8 +198,8 @@ class TasksController extends Controller
         
         // header("Content-Type: text/plain");
 
-        $qualities=["720p", "320p"];
-
+        $qualities=["720p", "1080p", "540p","320p"];
+        $videoInfo = false;
         foreach ($qualities as $key => $value) {
             foreach ($res["request"]["files"]["progressive"] as $value2) {
                 if($value2["quality"]==$value){
@@ -202,12 +209,15 @@ class TasksController extends Controller
             }
             if($videoInfo) break;
         }   
+        
+        
+        
+            $contents = file_get_contents($videoInfo["url"]);
+            Storage::put($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4", $contents);
+        }
 
-        $contents = file_get_contents($videoInfo["url"]);
-        Storage::put($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4", $contents);
-
+        }
         $i++;
-
     }
         
     }
