@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
-use GuzzleHttp\Client;
 
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 use App\Proyect;
-use Illuminate\Support\Facades\Storage;
+use DB;
 
 class TasksController extends Controller
 {
@@ -61,7 +62,6 @@ class TasksController extends Controller
 
         });
 
-        
 
         $info["lecciones"] =  $crawler->filter('.collapsible.no-border.no-box-shadow li header')->each(function (Crawler $node, $i) {
                 if(explode(".-", $node->text())){
@@ -121,23 +121,33 @@ class TasksController extends Controller
                 $i++;
             }
         }
-        
-        if(count($info["lecciones"])!=1){
+
+        if(count(explode("Examen del curso", end($info["lecciones"])["titulo"]))==2){
             array_pop($info["lecciones"]);
         }
-        
-        foreach ($info["lecciones"] as $value) {
 
-            self::index($value["videos"], $value["titulo"], $info["curso"]);
+        if(!DB::table("cursos")->where("curso", $info["curso"])->first()){
+            DB::table("cursos")->insert([
+                "curso" => $info["curso"]
+            ]);
+        }
+        $i=0;
+        foreach ($info["lecciones"] as $value) {
+            $info["lecciones"][$i]["videos"] = self::index($value["videos"], $value["titulo"], $info["curso"], $info, $i);
+            $i++;
         }
 
-        return "Curso descargado exitosamente";
+        DB::table("cursos")->where("curso", $info["curso"])->update([
+            "links" => json_encode($info),
+        ]);
+
+        return "Información registrada de manera exitosa";
     }
 
-    public function index($links, $bloqueTitulo, $cursoTitulo)
+    public function index($links, $bloqueTitulo, $cursoTitulo, $completeInfo, $lecNumber)
     {
         ini_set('memory_limit','16000000000000000000000000000000000000M');
-        $i=1;
+        $i=1; $j=0;
         foreach ($links as $linkito) {
         if(!Storage::exists($cursoTitulo."/".$bloqueTitulo."/".$i." ".$linkito["nombre"].".mp4")){
         $client = new \GuzzleHttp\Client();
@@ -200,6 +210,9 @@ class TasksController extends Controller
 
         $qualities=["720p", "1080p", "540p","320p"];
         $videoInfo = false;
+
+        $completeInfo["lecciones"][$lecNumber]["videos"][$j]["realLinks"] = $res["request"]["files"]["progressive"];
+
         foreach ($qualities as $key => $value) {
             foreach ($res["request"]["files"]["progressive"] as $value2) {
                 if($value2["quality"]==$value){
@@ -217,8 +230,10 @@ class TasksController extends Controller
         }
 
         }
-        $i++;
+        $i++; $j++;
     }
+
+    return $completeInfo["lecciones"][$lecNumber]["videos"];
         
     }
 
